@@ -1,3 +1,4 @@
+using NHM.Common;
 using NHM.Common.Enums;
 using NHM.UUID;
 using NHMCore.Configs;
@@ -156,6 +157,7 @@ namespace NHMCore
         // And if there are missing mining requirements
         internal static bool StartMining()
         {
+            EventLogger.Info("Starting mining");
             StartComputeDevicesCheckTimer();
             StartInternetCheckTimer();
             return true;
@@ -163,6 +165,7 @@ namespace NHMCore
 
         internal static void StopMining()
         {
+            EventLogger.Info("Stopping mining");
             StopComputeDevicesCheckTimer();
             StopInternetCheckTimer();
             DisplayNoInternetConnection(false); // hide warning

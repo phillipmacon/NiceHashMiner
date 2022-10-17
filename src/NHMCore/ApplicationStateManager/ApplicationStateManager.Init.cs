@@ -257,6 +257,7 @@ namespace NHMCore
                 }
 
                 SchedulesManager.Instance.Init();
+                EventLogger.Info("NHM initialization successful");
             }
             catch (Exception e)
             {

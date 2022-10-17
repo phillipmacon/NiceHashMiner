@@ -24,6 +24,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="auto" />
+                <!--<RowDefinition Height="auto" />-->
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
@@ -41,6 +42,14 @@
                     </ItemsControl>
                 </ScrollViewer>
             </Grid>
+            <!--<Grid Grid.Row="1" >
+                <StackPanel>
+                    <Button Content="Events" Style="{DynamicResource BigButtonPrimary}" Width="60" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                    <ScrollViewer Height="150" Background="{DynamicResource BorderColor}">
+                        <TextBlock >TEST</TextBlock>
+                    </ScrollViewer>
+                </StackPanel>
+            </Grid>-->
         </Grid>
     </Grid>
 </UserControl>
