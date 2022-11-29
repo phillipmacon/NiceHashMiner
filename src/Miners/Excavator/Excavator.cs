@@ -154,11 +154,20 @@ namespace Excavator
             // API port function might be blocking
             _apiPort = GetAvaliablePort();
             var (uuids, ids) = GetUUIDsAndIDs(_miningPairs);
+
+            Dictionary<int, int> indexer = ids
+            .Select((x, i) => new KeyValuePair<int, int>(i, x))
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            var orderedUuids = uuids
+                .OrderBy(x => indexer[uuids.ToList().IndexOf(x)])
+                .ToList();
+
             var (_, cwd) = GetBinAndCwdPaths();
             var fileName = $"cmd_{string.Join("_", ids)}.json";
-            var cmdStr = CmdConfig.CmdJSONString(_uuid, _miningLocation, _username, _algorithmType.ToString(), uuids.ToArray());
+            var cmdStr = CmdConfig.CmdJSONString(_uuid, _miningLocation, _username, _algorithmType.ToString(), _extraLaunchParameters, orderedUuids, uuids.ToArray());
             File.WriteAllText(Path.Combine(cwd, fileName), cmdStr);
-            var commandLine = $"-wp {_apiPort} -wa \"{_authToken}\" -c {fileName} -m -qx {_extraLaunchParameters}";
+            var commandLine = $"-wp {_apiPort} -wa \"{_authToken}\" -c {fileName} -m -qx";
             return commandLine;
         }
 

@@ -33,6 +33,10 @@ namespace Excavator
             public List<Command> Commands { get; set; } = new List<Command>();
         }
 
+        private static string _extraLaunchParameters = "";
+
+        private static List<string> _mappedDeviceIDs;
+
         private static JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore,
@@ -53,12 +57,69 @@ namespace Excavator
 
         private static List<Command> CreateInitialCommands(string subscribeLocation, string subscribeUsername, IEnumerable<string> gpuUuids, string algorithmName)
         {
+            var deviceUuids = gpuUuids.ToList();
             var initialCommands = new List<Command>
                 {
                     new Command { Id = 1, Method = "subscribe", Params = new List<string>{ subscribeLocation, subscribeUsername } },
                     new Command { Id = 2, Method = "algorithm.add", Params = new List<string>{ algorithmName.ToLower() } },
                 };
             initialCommands.AddRange(gpuUuids.Select((gpu, index) => new Command { Id = index + 3, Method = "worker.add", Params = new List<string> { algorithmName.ToLower(), gpu } }));
+
+
+            if (_extraLaunchParameters != "")
+            {
+                var elps = _extraLaunchParameters.Split(' ');
+                for (var i = 0; i < elps.Length; i++)
+                {
+                    if (i < elps.Length - 1 && elps[i].Contains('.') && elps[i+1].Contains(','))
+                    {
+                        var separatedElps = elps[i+1].Split(',');
+                        for (var j = 0; j < deviceUuids.Count; j++)
+                        {
+                            initialCommands.Add(new Command
+                            {
+                                Id = initialCommands.Count + 1,
+                                Method = elps[i],
+                                Params = new List<string>()
+                                {
+                                   _mappedDeviceIDs[j].ToString(),
+                                   separatedElps[j].ToString()
+                                }
+                            });
+                        }
+                        i++;
+                    }
+                    else if ((elps[i].Contains('.') && i == elps.Length - 1) || (elps[i].Contains('.') && elps[i + 1].Contains('.')))
+                    {
+                        for (var j = 0; j < deviceUuids.Count; j++)
+                        {
+                            initialCommands.Add(new Command
+                            {
+                                Id = initialCommands.Count + 1,
+                                Method = elps[i],
+                                Params = new List<string>()
+                                {
+                                   _mappedDeviceIDs[j].ToString()
+                                }
+                            });
+                        }
+                    }
+                    else
+                    {
+                        initialCommands.Add(new Command
+                        {
+                            Id = initialCommands.Count + 1,
+                            Method = elps[i],
+                            Params = new List<string>()
+                            {
+                                deviceUuids.FirstOrDefault(),
+                                elps[i+1]
+                            }
+                        });
+                        i++;
+                    }
+                }
+            }
             return initialCommands;
         }
 
@@ -147,7 +208,9 @@ namespace Excavator
             return $"nhmp.auto.nicehash.com:443";
         }
 
-        public static string CmdJSONString(string pluginUUID, string _miningLocation, string username, string algorithmName, params string[] uuids) { 
+        public static string CmdJSONString(string pluginUUID, string _miningLocation, string username, string algorithmName, string elps, List<string> IDs, params string[] uuids) {
+            _extraLaunchParameters = elps;
+            _mappedDeviceIDs = IDs;
             var miningLocation = GetMiningLocation(_miningLocation);
             var templatePath = CommandFileTemplatePath(pluginUUID);
             var miningServiceLocation = GetServiceLocation(miningLocation);
