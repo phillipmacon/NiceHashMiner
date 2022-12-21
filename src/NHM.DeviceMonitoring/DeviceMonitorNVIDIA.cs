@@ -292,11 +292,11 @@ namespace NHM.DeviceMonitoring
 
         public bool SetCoreClock(int coreClock)
         {
-            return NVIDIA_MON.nhm_nvidia_device_set_core_clocks(BusID, coreClock) == 0 ? true : false;
+            return NVIDIA_MON.nhm_nvidia_device_set_core_clocks_absolute(BusID, coreClock) == 0 ? true : false;
         }
         public bool SetMemoryClock(int memoryClock)
         {
-            return NVIDIA_MON.nhm_nvidia_device_set_memory_clocks(BusID, memoryClock) == 0 ? true : false;
+            return NVIDIA_MON.nhm_nvidia_device_set_memory_clocks_absolute(BusID, memoryClock) == 0 ? true : false;
         }
         public (bool ok, uint min, uint max, uint def) GetTDPLimits()
         {

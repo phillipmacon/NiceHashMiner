@@ -44,11 +44,15 @@ namespace NHM.DeviceMonitoring.NVIDIA
         [DllImport(dll, CallingConvention = CallingConvention.StdCall)]
         public static extern int nhm_nvidia_device_get_core_clocks(int bus_number, ref int core_clocks);
         [DllImport(dll, CallingConvention = CallingConvention.StdCall)]
-        public static extern int nhm_nvidia_device_set_core_clocks(int bus_number, int core_clocks);
+        public static extern int nhm_nvidia_device_set_core_clocks_absolute(int bus_number, int core_clocks);
+        [DllImport(dll, CallingConvention = CallingConvention.StdCall)]
+        public static extern int nhm_nvidia_device_set_core_clocks_delta(int bus_number, int core_clocks);
         [DllImport(dll, CallingConvention = CallingConvention.StdCall)]
         public static extern int nhm_nvidia_device_get_memory_clocks(int bus_number, ref int memory_clocks);
         [DllImport(dll, CallingConvention = CallingConvention.StdCall)]
-        public static extern int nhm_nvidia_device_set_memory_clocks(int bus_number, int memory_clocks);
+        public static extern int nhm_nvidia_device_set_memory_clocks_absolute(int bus_number, int memory_clocks);
+        [DllImport(dll, CallingConvention = CallingConvention.StdCall)]
+        public static extern int nhm_nvidia_device_set_memory_clocks_delta(int bus_number, int memory_clocks);
         [DllImport(dll, CallingConvention = CallingConvention.StdCall)]
         public static extern int nhm_nvidia_device_get_memory_info(int bus_number, ref ulong free, ref ulong total, ref ulong used);
         [DllImport(dll, CallingConvention = CallingConvention.StdCall)]
